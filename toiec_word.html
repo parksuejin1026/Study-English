@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토익 영단어 암기 프로그램</title>
+    <style>
+        /* CSS: 웹페이지 디자인 */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #word-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        #result {
+            font-size: 1.2em;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #correct-count {
+            color: #28a745;
+        }
+        #incorrect-count {
+            color: #dc3545;
+        }
+        #user-input {
+            width: 80%;
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #check-btn {
+            background-color: #007bff;
+        }
+        #check-btn:hover {
+            background-color: #0056b3;
+        }
+        .correct {
+            color: #28a745;
+        }
+        .incorrect {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>토익 영단어 암기</h1>
+        <p id="progress"></p>
+        <div id="word-display"></div>
+        <input type="text" id="user-input" placeholder="여기에 뜻을 입력하세요">
+        <button id="check-btn">정답 확인</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        // JavaScript: 단어 데이터 및 프로그램 로직
+        const toeicWords = {
+            "accommodate": ["수용하다", "숙박시키다"],
+            "analyze": ["분석하다"],
+            "comply": ["준수하다", "따르다"],
+            "dedicate": ["헌신하다", "전념하다"],
+            "enhance": ["향상시키다", "강화하다"],
+            "implement": ["실행하다", "이행하다"],
+            "negotiate": ["협상하다"],
+            "postpone": ["연기하다", "미루다"],
+            "recruit": ["모집하다", "채용하다"],
+            "revise": ["수정하다", "개정하다"],
+            "subsidize": ["보조금을 주다"],
+            "terminate": ["끝내다", "종료시키다"],
+            "validate": ["입증하다", "확인하다"],
+            "commence": ["시작하다"],
+            "confirm": ["확인하다", "확정하다"],
+            "depict": ["묘사하다", "그리다"],
+            "distribute": ["배포하다", "분배하다"],
+            "endorse": ["승인하다", "지지하다"],
+            "expedite": ["신속히 처리하다"],
+            "foresee": ["예견하다", "내다보다"],
+            "generate": ["생성하다", "만들어내다"],
+            "incur": ["초래하다", "발생시키다"],
+            "itemize": ["항목별로 나누다"],
+            "oblige": ["의무적으로 ~하게 하다"],
+            "perceive": ["인지하다", "인식하다"],
+            "prohibit": ["금지하다"],
+            "specialize": ["~을 전문으로 하다"],
+            "subsequent": ["그 후의", "다음의"],
+            "unanimous": ["만장일치의"],
+            "allocate": ["할당하다"],
+            "annex": ["합병하다", "부속물"],
+            "appraise": ["평가하다"],
+            "concur": ["동의하다"],
+            "delegate": ["위임하다", "대표"],
+            "disseminate": ["널리 알리다", "퍼뜨리다"],
+            "eligible": ["자격이 있는"],
+            "facilitate": ["용이하게 하다"],
+            "fluctuate": ["변동하다"],
+            "miscellaneous": ["잡다한", "여러 가지의"],
+            "omit": ["생략하다", "빠뜨리다"],
+            "preliminary": ["예비의", "준비의"],
+            "prerequisite": ["전제 조건"],
+            "reimburse": ["변제하다", "상환하다"],
+            "solicit": ["간청하다", "얻으려고 노력하다"],
+            "sustain": ["유지하다"],
+            "transmit": ["전송하다", "보내다"],
+            "utilize": ["활용하다", "이용하다"],
+            "abundant": ["풍부한"],
+            "arbitrary": ["임의의", "제멋대로의"],
+            "compatible": ["호환되는"],
+            "comprehensive": ["포괄적인"],
+            "consistent": ["일관된"],
+            "durable": ["내구성이 있는"],
+            "feasible": ["실행 가능한"],
+            "imperative": ["필수적인"],
+            "obsolete": ["시대에 뒤떨어진", "구식의"],
+            "proficient": ["숙련된", "능숙한"],
+            "tentative": ["잠정적인", "임시적인"],
+            "unprecedented": ["전례 없는"],
+            "valid": ["유효한"],
+            "viable": ["실행 가능한"],
+            "vulnerable": ["취약한"],
+            "acquisition": ["인수", "습득"],
+            "adjustment": ["조정", "적응"],
+            "appraisal": ["평가", "감정"],
+            "compliance": ["준수"],
+            "concession": ["양보", "허용"],
+            "consensus": ["합의", "의견 일치"],
+            "contention": ["논쟁", "주장"],
+            "deadline": ["마감일"],
+            "directory": ["명부", "안내 책자"],
+            "initiative": ["계획", "주도권"],
+            "liability": ["책임", "부채"],
+            "merger": ["합병"],
+            "patent": ["특허"],
+            "quota": ["할당량"],
+            "remittance": ["송금"],
+            "resilience": ["회복력"],
+            "supervision": ["감독", "관리"],
+            "amend": ["개정하다"],
+            "assign": ["배정하다", "할당하다"],
+            "certify": ["증명하다", "보증하다"],
+            "compile": ["편집하다", "모으다"],
+            "confer": ["협의하다", "수여하다"],
+            "coordinate": ["조정하다"],
+            "deduct": ["공제하다", "빼다"],
+            "enroll": ["등록하다", "입학하다"],
+            "evacuate": ["대피시키다"],
+            "exceed": ["초과하다"],
+            "finalize": ["마무리하다", "완성하다"],
+            "guarantee": ["보증하다"],
+            "hesitate": ["주저하다", "망설이다"],
+            "inquire": ["문의하다"],
+            "leverage": ["영향력", "지렛대 효과"],
+            "maintain": ["유지하다", "관리하다"],
+            "notify": ["통지하다", "알리다"],
+            "oversee": ["감독하다"],
+            "pertain": ["~에 관련되다"],
+            "procure": ["획득하다", "조달하다"],
+            "reconcile": ["화해시키다", "조정하다"],
+            "reinforce": ["강화하다"],
+            "replicate": ["복제하다"],
+            "resolve": ["해결하다", "결심하다"],
+            "scrutinize": ["면밀히 조사하다"],
+            "stipulate": ["규정하다", "명시하다"],
+            "supplement": ["보충하다"],
+            "surpass": ["능가하다"],
+            "undergo": ["~을 겪다", "경험하다"],
+            "warrant": ["~을 정당화하다"],
+            "withdraw": ["철회하다"],
+            "accompany": ["동행하다"]
+        };
+
+        const wordDisplay = document.getElementById('word-display');
+        const userInput = document.getElementById('user-input');
+        const checkBtn = document.getElementById('check-btn');
+        const resultText = document.getElementById('result');
+        const progressText = document.getElementById('progress');
+
+        const allWords = Object.keys(toeicWords);
+        let shuffledWords = [...allWords];
+        let currentIndex = 0;
+        let correctCount = 0;
+        
+        // 무작위로 20개의 단어를 뽑아내는 함수
+        function selectRandomWords(array, count) {
+            const shuffled = array.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        // 퀴즈 시작 함수
+        function startQuiz() {
+            // ✅ 수정: 전체 단어에서 20개를 무작위로 선택합니다.
+            shuffledWords = selectRandomWords(allWords, 20);
+            currentIndex = 0;
+            correctCount = 0;
+            
+            userInput.style.display = 'block';
+            checkBtn.style.display = 'block';
+            displayNextWord();
+        }
+
+        function displayNextWord() {
+            if (currentIndex >= shuffledWords.length) {
+                // 퀴즈 종료
+                wordDisplay.textContent = "퀴즈 종료! 👏";
+                resultText.textContent = `최종 점수: ${correctCount} / ${shuffledWords.length}`;
+                userInput.style.display = 'none';
+                checkBtn.style.display = 'none';
+                progressText.textContent = "";
+                return;
+            }
+            
+            const currentWord = shuffledWords[currentIndex];
+            wordDisplay.textContent = currentWord;
+            userInput.value = '';
+            userInput.focus(); // 입력창에 자동으로 커서가 가도록
+            resultText.textContent = '';
+            progressText.textContent = `${currentIndex + 1} / ${shuffledWords.length}`;
+        }
+
+        function checkAnswer() {
+            const currentWord = shuffledWords[currentIndex];
+            const correctMeanings = toeicWords[currentWord];
+            const userAnswer = userInput.value.toLowerCase().trim();
+
+            if (userAnswer === '') {
+                resultText.textContent = '답변을 입력해주세요.';
+                resultText.className = 'incorrect';
+                return;
+            }
+
+            const isCorrect = correctMeanings.some(meaning => meaning.toLowerCase().trim() === userAnswer);
+
+            if (isCorrect) {
+                resultText.textContent = '✅ 정답입니다!';
+                resultText.className = 'correct';
+                correctCount++;
+            } else {
+                resultText.textContent = `❌ 틀렸습니다. 정답은 '${correctMeanings.join(', ')}'입니다.`;
+                resultText.className = 'incorrect';
+            }
+            currentIndex++;
+            setTimeout(displayNextWord, 2000);
+        }
+        
+        userInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        checkBtn.addEventListener('click', checkAnswer);
+
+        // 페이지 로드 시 퀴즈 시작
+        startQuiz();
+    </script>
+</body>
+</html>
